@@ -1,0 +1,17 @@
+oi
+
+perdime um bocado porque ao alterar esqueleto façtavam-me 3mm e andei enredado ate descobrir porque .
+
+dito isto ve a pasta esquema da frente  tem la a pcb frente v1 e confirma se e deste lado as pistas .
+
+a pcb e a q tem seta amarela .
+
+se calhar tenho que fazer duas plcas para os potenciometros pra ficarem na horizontal e ligam a pcb com ficha molex.
+
+ha no esquema os potenciometros nao sao simples? os que comprei sao duplos ou estou errado?
+
+quando poderes diz algo .
+
+quero arrancar com esta com mais velocidade.
+
+abraco

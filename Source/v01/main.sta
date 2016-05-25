@@ -1,0 +1,94 @@
+
+ROM used: 1803 (22%)
+          1803 (22%) including unused fragments
+
+          1 Average locations per line
+          3 Average locations per statement
+
+RAM used: 67 (18%) at main() level
+          89 (24%) worst case
+
+Stack used: 7 worst case (out of 6 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  471   166  27  main.c
+  313     0   0  F:\INSTAL~1\ELECTR~1\PICC\devices\16f877a.h
+   37     0   0  F:\INSTAL~1\ELECTR~1\PICC\drivers\stdio.h
+  417     0   0  F:\INSTAL~1\ELECTR~1\PICC\drivers\string.h
+   28     0   0  F:\INSTAL~1\ELECTR~1\PICC\drivers\stddef.h
+   28     0   0  F:\INSTAL~1\ELECTR~1\PICC\drivers\ctype.h
+ 1493   380  62  F:\INSTAL~1\ELECTR~1\PICC\drivers\stdlib.h
+  180    63  10  F:\INSTAL~1\ELECTR~1\PICC\drivers\LCD.c
+----- -----
+ 2967   609 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     21   1   1             @delay_ms1
+0     16   1   1   482  8.0  @I2C_WRITEU_1
+ Inline        1   219  5.0  @I2C_READU_1
+0     21   1   5             @MUL1616
+0      8   0   0   389  2.3  @const336
+ Inline        3   463  4.3  lcd_read_byte
+0     12   1   1   134  2.2  lcd_send_nibble
+0     58   3   3   317  4.3  lcd_send_byte
+0     42   2   2   422  4.7  lcd_init
+0     18   1   4   186  5.5  lcd_gotoxy
+0     37   2   1   272  4.1  lcd_putc
+0     64   4   0   143  3.3  @const362
+0     60   3   1   143  3.3  tecla_pulsada
+0     11   1   0   104  3.0  timer2_isr
+ Inline        3   167  3.5  readPCFButtons
+0    290  16   8  1114  7.4  decodePressedButton
+0     12   1   0             @const408
+0     13   1   1             @SPRINTF
+0     12   1   0   757  2.4  @const413
+0    115   6   1   757  2.4  initLcd
+0     10   1   0   104  3.2  @const415
+0     11   1   0    72  1.2  @const416
+0     10   1   0   187  3.6  @const418
+0     16   1   0   104  3.2  @const419
+0     12   1   0    72  1.2  configGPIO
+0     45   2   3   187  3.6  readADCS
+0    344  19  10  1030  9.7  checkADCChanges
+0     13   1   0   386  4.2  @const424
+0     21   1   3   386  4.2  @DIV88
+0    101   6   6   386  4.2  @PRINTF_D_410
+0     19   1   0   213  4.2  @const431
+0     18   1   0   386  4.2  @const432
+0     18   1   0   386  4.2  @const433
+0      8   0   0   386  4.2  @goto11541
+0      3   0   4    27  1.8  setPGAValue
+0      3   0   4    27  1.8  setToneValue
+0     93   5   7   386  4.2  setLineRecChannel
+0      3   0   0     5  1.0  restoreSavedValues
+0    149   8   1   893  4.8  MAIN
+0      9   0   0             @const441
+0      9   0   0             @const442
+0      9   0   0             @const443
+0      9   0   0             @const444
+
+Program metrics:
+    Functions               35
+    Statements              609
+    Comments                784
+    Volume (V)              22007
+    Difficilty (D)          135.0
+    Effort to implement (E) 2970940
+    Time to implement (T)   45 hours, 51 minutes
+    Est Delivered Bugs (B)  7
+    Cyclomatic Complexity   51
+    Maintainability (MI)    134
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-0003B    56  0  
+0003C-007FF  1743  245  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+

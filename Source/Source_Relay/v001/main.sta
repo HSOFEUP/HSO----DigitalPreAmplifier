@@ -1,0 +1,74 @@
+
+ROM used: 1001 (12%)
+          1001 (12%) including unused fragments
+
+          0 Average locations per line
+          2 Average locations per statement
+
+RAM used: 120 (33%) at main() level
+          131 (36%) worst case
+
+Stack used: 7 worst case (out of 7 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  414    89  17  main.c
+  313     0   0  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\devices\16f877a.h
+ 1493   380  71  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\drivers\stdlib.h
+   28     0   0  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\drivers\stddef.h
+  417     0   0  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\drivers\string.h
+   28     0   0  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\drivers\ctype.h
+   37     0   0  ..\..\..\..\..\..\Installed_Programs\Electronics\PICC\drivers\stdio.h
+  193    70  13  i2c_Flex_LCD.c
+----- -----
+ 2923   539 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     21   2   1             @delay_ms1
+0     18   2   1             @I2C_WRITEU_1
+ Inline        1             @I2C_READU_1
+ Inline        5             @DIV1616
+0     43   4   1   156  1.3  i2c_send_nibble
+0     23   2   2   178  3.6  lcd_send_byte
+0     15   1   0    48  1.1  lcd_clear
+0     79   8   0   362  1.4  lcd_init
+0     56   6   2   521  6.8  lcd_gotoxy
+0     75   7   2   652  4.5  LCD_PUTC
+0    128  13   3   586  3.8  LCD_Splash
+0      8   1   0             @const370
+0     13   1   0             @const372
+0     15   1   0             @const374
+0     38   4   3   138  2.8  PCF_8574_Read
+0      3   0   0     3  0.0  PGA_2311_Config
+0     12   1   0    56  1.6  Timer_Config
+0     18   2   0    37  1.1  ADC_Config
+0     97  10   5   402  5.7  Analog_Check
+0    155  15   8   373  5.6  ADC_Read_All
+0      6   1   0    48  1.9  ext_isr
+0     11   1   0   104  3.0  timer2_isr
+0    107  11   4   939  6.8  MAIN
+
+Program metrics:
+    Functions               16
+    Statements              539
+    Comments                870
+    Volume (V)              7597
+    Difficilty (D)          51.2
+    Effort to implement (E) 389268
+    Time to implement (T)   6 hours, 0 minutes
+    Est Delivered Bugs (B)  2
+    Cyclomatic Complexity   24
+    Maintainability (MI)    36
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-0003B    56  0  
+0003C-007FF   941  1047  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+

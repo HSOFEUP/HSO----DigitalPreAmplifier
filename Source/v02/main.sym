@@ -1,0 +1,66 @@
+004-005 @READ_PROGRAM_MEMORY8.P1
+00C     @SCRATCH
+00D     @SCRATCH
+00D     _RETURN_
+00E     @SCRATCH
+00F     @SCRATCH
+010     @SCRATCH
+011     @INTERRUPT_AREA
+012     @INTERRUPT_AREA
+013     @INTERRUPT_AREA
+014     @INTERRUPT_AREA
+015     @INTERRUPT_AREA
+016     @INTERRUPT_AREA
+017     @INTERRUPT_AREA
+018     @INTERRUPT_AREA
+019     @INTERRUPT_AREA
+01A-01B tempValue
+01C-01D outValue
+01E     timerCount
+01F-020 readAD.i
+01F-020 writeDA.value
+021-022 writeDA.i
+023     writeDA.@SCRATCH1
+024     writeDA.@SCRATCH2
+10D-10E @READ_PROGRAM_MEMORY8.P1
+
+ROM Allocation:
+003A  timer0_isr
+004C  configPorts
+0061  readAD
+0081  writeDA
+004F  setupTimer
+005F  startTimer
+0058  setInitialState
+00B1  MAIN
+00B1  @cinit
+
+Project Directory:
+    E:\Dropbox\Hugo_Macieira\HSO_Stuff\[MacLabelProjects]\Sensor IR\source\v02\
+
+Project Files:
+    main.c
+    F:\INSTAL~1\ELECTR~1\PICC\devices\16F84A.h
+
+Units:
+    main.c (main)
+
+Compiler Settings:
+    Processor:      PIC16F84A
+    Pointer Size:   8
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Predefined symbols:
+       #define __16F84A TRUE
+
+Output Files:
+    Errors:      main.err
+    Ext Symbols: main.esym
+    INHX8:       main.hex
+    Symbols:     main.sym
+    List:        main.lst
+    Debug/COFF:  main.cof
+    Project:     main.PJT
+    Call Tree:   main.tre
+    Statistics:  main.sta

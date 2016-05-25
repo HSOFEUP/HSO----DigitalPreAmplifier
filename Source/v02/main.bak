@@ -1,0 +1,178 @@
+#include <16F84A.h>
+
+#FUSES NOWDT                    //No Watch Dog Timer
+#FUSES HS                       //High speed Osc (> 4mhz)
+#FUSES NOPUT                    //No Power Up Timer
+#FUSES NOPROTECT                //Code not protected from reading
+
+#use delay(clock=10000000)
+
+// Prototipes
+
+void readAD(void);
+void writeAD(unsigned int16 value);
+
+
+// Global Variables
+unsigned int16 tempValue;
+
+//Macros
+// AD_CLCK_HIGH
+// AD_CLOCK_LOW
+// AD_DATA_READ_BIT
+// AD_START_CONV
+// AD_CS_LOW
+// AD_CS_HIGH
+
+
+// AD
+#define AD_CLK_HIGH output_high(PIN_B7)
+#define AD_CLK_LOW output_low(PIN_B7)
+
+#define AD_START_CONV_HIGH output_high(PIN_B5)
+#define AD_START_CONV_LOW output_low(PIN_B5)
+
+#define AD_READ_SDI input(PIN_B6)
+
+//DA
+#define DA_CLK_LOW output_low(PIN_B4)
+#define DA_CLK_HIGH output_high(PIN_B4)
+
+#define DA_LOAD_LOW output_low(PIN_B1)
+#define DA_LOAD_HIGH output_high(PIN_B1)
+
+#define DA_CLR_LOW output_low(PIN_B3)
+#define DA_CLR_HIGH output_high(PIN_B3)
+
+#define DA_SDA_PIN PIN_B2
+
+
+
+/*
+PIN MAP
+RB0 = LEDS_OSC -OUT
+RB1 = DA_LOAD  -OUT
+RB2 = DA_DATA  -OUT
+RB3 = DA_CLR   -OUT
+RB4 = DA_CLK   -OUT
+
+RB5 = AD_START_CONV -OUT
+RB6 = AD_DATA -IN
+RB7 = AD_CLK - OUT
+*/
+
+/*
+--------------
+ISR ZONE
+--------------
+*/
+
+
+
+
+/*
+--------------
+FUNCTIONS ZONE
+--------------
+*/
+// FUNCTION: CONFIGURE PORTS
+void configPorts(void){
+   set_tris_b(0b01000000);
+}
+
+
+
+// FUNCTION: STETUP_TIMER
+void setupTimer1(void){
+
+
+}
+
+
+
+// FUNCTION: READ ADC VALUES
+void readAD(void){
+int16 i=15;
+
+   AD_CLK_LOW; // Ensure clk is low
+
+   // Do a Start Conversion
+   AD_START_CONV_LOW; // Start AD
+   delay_us(6);
+   AD_START_CONV_HIGH; //
+   delay_us(8);
+
+
+   //delay_cycles( 1 ); // Same as NOP 1/5MHZ delay
+
+   // lets read the stuff
+   for (i=15; i>=0; i--){
+      AD_CLK_HIGH;
+      delay_us(3); // delay to fetch the bit
+      tempValue |=  (AD_READ_SDI<<i);
+      delay_us(4);
+      AD_CLK_LOW;
+      delay_us(4); // delay to next byte
+   }
+   
+}
+
+
+
+// FUNCTION: write AD
+void writeDA(unsigned int16 value){
+int16 i=0;
+
+// do CS
+
+   for (i=15; i>=0; i--){
+      DA_CLK_HIGH;
+      delay_us(3);
+      output_bit(DA_SDA_PIN,(tempValue >> i) & 1);
+      delay_us(4);
+      DA_CLK_LOW;
+      delay_us(4);
+      
+   }
+   
+   // Issue Load to DA
+
+// Release CS
+
+}
+
+
+
+// FUNCTION: SET TIMER
+void setTimer(void){
+
+
+}
+
+
+
+
+//--MAIN--
+void main(){
+
+int8 dummy;
+
+   configPorts();
+   setupTimer1();
+
+  
+
+   for(;;){
+   readAD();
+   
+   // do calculations
+   delay_ms(500);
+   
+   writeDA(tempValue);
+   
+   
+      
+   
+   
+   }
+}

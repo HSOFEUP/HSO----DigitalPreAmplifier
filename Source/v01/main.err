@@ -1,0 +1,6 @@
+>>> Warning 203 "main.c" Line 279(1,1): Condition always TRUE
+>>> Warning 216 "main.c" Line 472(0,1): Interrupts disabled during call to prevent re-entrancy:  (@I2C_WRITEU_1)
+>>> Warning 202 "main.c" Line 325(15,33): Variable never used:   lineChannelDecoded
+>>> Warning 202 "main.c" Line 325(35,52): Variable never used:   recChannelDecoded
+      Memory usage:   ROM=22%      RAM=18% - 24%
+      0 Errors,  4 Warnings.

@@ -1,0 +1,29 @@
+[PROJECT]
+Target=E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main.hex
+Development_Mode=
+Processor_Text=PIC16F877A
+ToolSuite=CCS
+Processor=0x877A
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+Type=4
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+Path=
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+FileList=
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+BuildTool=
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+OptionString=
+[E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main]
+AdditionalOptionString=
+[mru-list]
+1=E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Units]
+Link=0
+Count=1
+1=E:\Dropbox\Hugo_Valente\HSO_Stuff\Projects\[Ongoing_Projects]\Pre_Amplifier_Digital_Ongoing\Source\main
+[Opened Files]
+1=..\..\Pre_Amplifier_Digital_Ongoing\Source\main.c
+2=

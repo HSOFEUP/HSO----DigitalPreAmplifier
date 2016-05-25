@@ -1,0 +1,475 @@
+CCS PCM C Compiler, Version 4.065, 44948               19-mai.-15 17:44
+
+               Filename: main.lst
+
+               ROM used: 195 words (19%)
+                         Largest free fragment is 829
+               RAM used: 19 (28%) at main() level
+                         25 (37%) worst case
+               Stack:    2 worst case (1 in main + 1 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   0B1
+0003:  NOP
+0004:  BTFSC  03.5
+0005:  GOTO   00A
+0006:  MOVWF  11
+0007:  SWAPF  03,W
+0008:  MOVWF  12
+0009:  GOTO   00F
+000A:  BCF    03.5
+000B:  MOVWF  11
+000C:  SWAPF  03,W
+000D:  MOVWF  12
+000E:  BSF    12.1
+000F:  MOVF   0A,W
+0010:  MOVWF  19
+0011:  CLRF   0A
+0012:  BCF    03.7
+0013:  SWAPF  11,F
+0014:  MOVF   04,W
+0015:  MOVWF  13
+0016:  MOVF   0C,W
+0017:  MOVWF  14
+0018:  MOVF   0D,W
+0019:  MOVWF  15
+001A:  MOVF   0E,W
+001B:  MOVWF  16
+001C:  MOVF   0F,W
+001D:  MOVWF  17
+001E:  MOVF   10,W
+001F:  MOVWF  18
+0020:  BCF    03.5
+0021:  BTFSS  0B.5
+0022:  GOTO   025
+0023:  BTFSC  0B.2
+0024:  GOTO   03A
+0025:  MOVF   13,W
+0026:  MOVWF  04
+0027:  MOVF   14,W
+0028:  MOVWF  0C
+0029:  MOVF   15,W
+002A:  MOVWF  0D
+002B:  MOVF   16,W
+002C:  MOVWF  0E
+002D:  MOVF   17,W
+002E:  MOVWF  0F
+002F:  MOVF   18,W
+0030:  MOVWF  10
+0031:  MOVF   19,W
+0032:  MOVWF  0A
+0033:  SWAPF  12,W
+0034:  MOVWF  03
+0035:  BCF    03.5
+0036:  SWAPF  11,W
+0037:  BTFSC  12.1
+0038:  BSF    03.5
+0039:  RETFIE
+.................... #include <16F84A.h> 
+.................... //////// Standard Header file for the PIC16F84A device //////////////// 
+.................... #device PIC16F84A 
+.................... #list 
+....................  
+....................  
+.................... #FUSES NOWDT                 	//No Watch Dog Timer 
+.................... #FUSES XT                    	//High speed Osc (> 4mhz) 
+.................... #FUSES NOPUT                 	//No Power Up Timer 
+.................... #FUSES NOPROTECT             	//Code not protected from reading 
+....................  
+.................... #use delay(clock=10000000) 
+....................  
+.................... #use delay(clock=10000000) 
+.................... #use fast_io(B) 
+....................  
+.................... // Prototipes 
+.................... void configPorts(void); 
+.................... void setupTimer(void); 
+.................... void setInitialState(void); 
+.................... void readAD(void); 
+.................... void writeAD(unsigned int16 value); 
+.................... void startTimer(void); 
+.................... void stopTimer(void); 
+....................  
+....................  
+.................... // Global Variables 
+.................... unsigned int16 tempValue; 
+.................... unsigned int16 outValue; 
+.................... int8 timerCount; 
+....................  
+.................... //Macros 
+....................  
+.................... #define N_BITS_SDA_TO_SHIFT 12 
+.................... #define N_TIMER_RELOADS 11 
+....................  
+.................... // AD_CLCK_HIGH 
+.................... // AD_CLOCK_LOW 
+.................... // AD_DATA_READ_BIT 
+.................... // AD_START_CONV 
+.................... // AD_CS_LOW 
+.................... // AD_CS_HIGH 
+....................  
+....................  
+.................... // AD 
+.................... #define AD_CLK_HIGH output_high(PIN_B7) 
+.................... #define AD_CLK_LOW output_low(PIN_B7) 
+....................  
+.................... #define AD_START_CONV_HIGH output_high(PIN_B5) 
+.................... #define AD_START_CONV_LOW output_low(PIN_B5) 
+....................  
+.................... #define AD_READ_SDI input(PIN_B6) 
+....................  
+.................... //DA 
+.................... #define DA_CLK_LOW output_low(PIN_B4) 
+.................... #define DA_CLK_HIGH output_high(PIN_B4) 
+....................  
+.................... #define DA_LOAD_LOW output_low(PIN_B1) 
+.................... #define DA_LOAD_HIGH output_high(PIN_B1) 
+....................  
+.................... #define DA_CLR_LOW output_low(PIN_B3) 
+.................... #define DA_CLR_HIGH output_high(PIN_B3) 
+....................  
+.................... #define DA_SDA_PIN_HIGH output_high(PIN_B2) 
+.................... #define DA_SDA_PIN_LOW output_low(PIN_B2) 
+....................  
+.................... #define LED_OUT_HIGH output_high(PIN_B0) 
+.................... #define LED_OUT_LOW output_low(PIN_B0) 
+....................  
+....................  
+....................  
+.................... /* 
+.................... PIN MAP 
+.................... RB0 = LEDS_OSC -OUT 
+.................... RB1 = DA_LOAD  -OUT 
+.................... RB2 = DA_DATA  -OUT 
+.................... RB3 = DA_CLR   -OUT 
+.................... RB4 = DA_CLK   -OUT 
+....................  
+.................... RB5 = AD_START_CONV -OUT 
+.................... RB6 = AD_DATA -IN 
+.................... RB7 = AD_CLK - OUT 
+.................... */ 
+....................  
+.................... /* 
+.................... -------------- 
+.................... ISR ZONE 
+.................... -------------- 
+.................... */ 
+.................... // (clock/4)/RTCC_DIV = Tempo overflow para a escala toda do timer, tem que ser 128, despois decontar o load, 
+.................... // ou 256 e descontar o reload 
+.................... // com 128, basta agora escolher um e calcular o reload, :D 
+.................... // Eu tou a ver mas o datasheet nao da essa formula, esquecime dos 256, mas ok, e facil 
+.................... #int_RTCC 
+.................... void timer0_isr(void){ 
+....................  
+.................... 	// Reload timer on entry (less overhead) 
+.................... 	set_timer0(235); 
+003A:  MOVLW  EB
+003B:  MOVWF  01
+....................  
+.................... 	if (timerCount >0) LED_OUT_LOW; 
+003C:  MOVF   1E,F
+003D:  BTFSC  03.2
+003E:  GOTO   041
+003F:  BCF    06.0
+.................... 	else LED_OUT_HIGH; 
+0040:  GOTO   042
+0041:  BSF    06.0
+....................  
+.................... 	timerCount++; 
+0042:  INCF   1E,F
+.................... 	if(timerCount >21){ 
+0043:  MOVF   1E,W
+0044:  SUBLW  15
+0045:  BTFSC  03.0
+0046:  GOTO   049
+....................  		timerCount=0; 
+0047:  CLRF   1E
+.................... 		LED_OUT_HIGH; 
+0048:  BSF    06.0
+....................  	} 
+....................  
+....................  
+.................... } 
+.................... //  
+....................  
+....................  
+....................  
+....................  
+.................... /* 
+.................... -------------- 
+.................... FUNCTIONS ZONE 
+.................... -------------- 
+.................... */ 
+.................... // FUNCTION: CONFIGURE PORTS 
+0049:  BCF    0B.2
+004A:  BCF    0A.3
+004B:  GOTO   025
+.................... void configPorts(void){ 
+....................    set_tris_b(0b01000000); 
+004C:  MOVLW  40
+004D:  TRIS   6
+.................... } 
+004E:  GOTO   0B5 (RETURN)
+....................  
+....................  
+....................  
+....................  
+....................  
+....................  
+....................  
+.................... // FUNCTION: READ ADC VALUES 
+.................... void readAD(void){ 
+.................... int16 i=0; 
+*
+0061:  CLRF   1F
+0062:  CLRF   20
+....................  
+.................... 	AD_CLK_LOW; // Ensure clk is low 
+0063:  BCF    06.7
+....................     // Do a Start Conversion 
+....................     AD_START_CONV_LOW; // Start AD 
+0064:  BCF    06.5
+.................... 	delay_us(1); 
+0065:  GOTO   066
+....................     AD_START_CONV_HIGH; // 
+0066:  BSF    06.5
+....................     delay_us(8); 
+0067:  MOVLW  06
+0068:  MOVWF  0C
+0069:  DECFSZ 0C,F
+006A:  GOTO   069
+006B:  NOP
+....................  
+....................  
+....................     //delay_cycles( 1 ); cedance rules may not be as intended, use () t// Same as NOP 1/5MHZ delay 
+....................  
+....................     // lets read the stuff 
+....................     for (i=0; i<=15; i++){ 
+006C:  CLRF   20
+006D:  CLRF   1F
+006E:  MOVF   20,F
+006F:  BTFSS  03.2
+0070:  GOTO   080
+0071:  MOVF   1F,W
+0072:  SUBLW  0F
+0073:  BTFSS  03.0
+0074:  GOTO   080
+....................        AD_CLK_HIGH; 
+0075:  BSF    06.7
+.................... 	   if(AD_READ_SDI) tempValue |=1; 
+0076:  BTFSC  06.6
+0077:  BSF    1A.0
+.................... 	   else tempValue |=0; 
+....................        AD_CLK_LOW; 
+0078:  BCF    06.7
+.................... 	   tempValue <<=1; 
+0079:  BCF    03.0
+007A:  RLF    1A,F
+007B:  RLF    1B,F
+....................     } 
+007C:  INCF   1F,F
+007D:  BTFSC  03.2
+007E:  INCF   20,F
+007F:  GOTO   06E
+....................     
+.................... } 
+0080:  GOTO   0B9 (RETURN)
+....................  
+....................  
+....................  
+.................... // FUNCTION: write AD 
+.................... void writeDA(unsigned int16 value){ 
+.................... int16 i=0; 
+0081:  CLRF   21
+0082:  CLRF   22
+....................  
+....................  
+.................... // ensure LOAD and CLK is High 
+.................... DA_CLK_HIGH; 
+0083:  BSF    06.4
+.................... DA_LOAD_HIGH; 
+0084:  BSF    06.1
+....................  
+.................... // Pre shift value to align output 
+.................... value <<=( 4); 
+0085:  RLF    1F,F
+0086:  RLF    20,F
+0087:  RLF    1F,F
+0088:  RLF    20,F
+0089:  RLF    1F,F
+008A:  RLF    20,F
+008B:  RLF    1F,F
+008C:  RLF    20,F
+008D:  MOVLW  F0
+008E:  ANDWF  1F,F
+....................  
+....................  
+.................... 	for (i=0; i<=N_BITS_SDA_TO_SHIFT; i++){ 
+008F:  CLRF   22
+0090:  CLRF   21
+0091:  MOVF   22,F
+0092:  BTFSS  03.2
+0093:  GOTO   0AE
+0094:  MOVF   21,W
+0095:  SUBLW  0C
+0096:  BTFSS  03.0
+0097:  GOTO   0AE
+....................     	DA_CLK_LOW; // lower clk 
+0098:  BCF    06.4
+.................... 		if((value & 0x8000)==0){ 
+0099:  CLRF   23
+009A:  MOVF   20,W
+009B:  ANDLW  80
+009C:  MOVWF  24
+009D:  MOVF   23,F
+009E:  BTFSS  03.2
+009F:  GOTO   0A5
+00A0:  MOVF   24,F
+00A1:  BTFSS  03.2
+00A2:  GOTO   0A5
+.................... 			DA_SDA_PIN_LOW; 
+00A3:  BCF    06.2
+.................... 		} 
+.................... 		else { 
+00A4:  GOTO   0A6
+.................... 			DA_SDA_PIN_HIGH; 
+00A5:  BSF    06.2
+.................... 		} 
+.................... 		// SDA is set now lets do clock 
+....................  
+.................... 		// Issue clock and make bit out 
+.................... 		DA_CLK_HIGH; 
+00A6:  BSF    06.4
+.................... 		value <<=1; // Shift to left the bit 
+00A7:  BCF    03.0
+00A8:  RLF    1F,F
+00A9:  RLF    20,F
+.................... 		 
+....................    	} 
+00AA:  INCF   21,F
+00AB:  BTFSC  03.2
+00AC:  INCF   22,F
+00AD:  GOTO   091
+....................     
+.................... 	 
+....................     // Issue Load values to DA 
+.................... 	DA_LOAD_LOW; 
+00AE:  BCF    06.1
+.................... 	DA_LOAD_HIGH; 
+00AF:  BSF    06.1
+....................  
+....................  
+.................... } 
+00B0:  GOTO   0C1 (RETURN)
+....................  
+....................  
+....................  
+.................... // FUNCTION: SET TIMER 
+.................... void setupTimer(void){ 
+....................  
+.................... setup_timer_0(RTCC_INTERNAL|RTCC_8_BIT); 
+*
+004F:  BSF    03.5
+0050:  MOVF   01,W
+0051:  ANDLW  C0
+0052:  MOVWF  01
+.................... set_timer0(235); 
+0053:  MOVLW  EB
+0054:  BCF    03.5
+0055:  MOVWF  01
+.................... enable_interrupts(INT_RTCC); 
+0056:  BSF    0B.5
+....................  
+....................  
+.................... } 
+0057:  GOTO   0B6 (RETURN)
+....................  
+.................... // FUNCTION: FIRE TIMER 
+.................... void startTimer(void){ 
+.................... enable_interrupts(GLOBAL); 
+*
+005F:  BSF    0B.7
+....................  
+.................... } 
+0060:  GOTO   0B8 (RETURN)
+....................  
+.................... // FUNCTION: STOP TIMER 
+.................... void stopTimer(void){ 
+.................... disable_interrupts(GLOBAL); 
+.................... // Ensure Led stay //tenho esses valores  
+....................  
+.................... } 
+....................  
+....................  
+.................... // FUNCTION: SET InITIAL STATE 
+.................... void setInitialState(void){ 
+....................  
+.................... DA_CLK_HIGH; 
+*
+0058:  BSF    06.4
+.................... // Do a reset DA 
+.................... DA_LOAD_HIGH; 
+0059:  BSF    06.1
+.................... // issue reset 
+.................... DA_CLR_LOW; 
+005A:  BCF    06.3
+.................... DA_CLR_HIGH; 
+005B:  BSF    06.3
+....................  
+.................... AD_CLK_LOW; 
+005C:  BCF    06.7
+.................... AD_START_CONV_HIGH; 
+005D:  BSF    06.5
+....................  
+.................... } 
+005E:  GOTO   0B7 (RETURN)
+....................  
+....................  
+....................  
+....................  
+.................... //--MAIN-- 
+.................... void main(){ 
+*
+00B1:  CLRF   04
+00B2:  MOVLW  1F
+00B3:  ANDWF  03,F
+....................  
+.................... //int8 dummy; 
+....................  
+.................... 	configPorts(); 
+00B4:  GOTO   04C
+.................... 	setupTimer(); // Apenas configurar timer para a freq e ver onde se pode lancar 
+00B5:  GOTO   04F
+.................... 	setInitialState(); 
+00B6:  GOTO   058
+.................... 	 
+.................... 	// Se estiver sempre a correr, podemos fazer isto 
+.................... 	startTimer(); // fica sempre a correr 
+00B7:  GOTO   05F
+....................  
+....................   	while(1){ 
+....................    		readAD(); 
+00B8:  GOTO   061
+....................    		// do calculations 
+....................    		//delay_ms(500); // Erase at the end this line 
+.................... 		outValue = tempValue; // Do the required math  
+00B9:  MOVF   1B,W
+00BA:  MOVWF  1D
+00BB:  MOVF   1A,W
+00BC:  MOVWF  1C
+.................... 	   // writeDA(outValue);  
+.................... 		writeDA(0x5555); 
+00BD:  MOVLW  55
+00BE:  MOVWF  20
+00BF:  MOVWF  1F
+00C0:  GOTO   081
+....................     
+....................     } 
+00C1:  GOTO   0B8
+.................... } 
+00C2:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3FF9   XT NOWDT NOPUT NOPROTECT

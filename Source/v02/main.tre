@@ -1,0 +1,10 @@
+ÀÄmain
+   ÃÄMAIN  0/18  Ram=0
+   ³  ÃÄ??0??
+   ³  ÃÄconfigPorts  0/3  Ram=0
+   ³  ÃÄsetupTimer  0/9  Ram=0
+   ³  ÃÄsetInitialState  0/7  Ram=0
+   ³  ÃÄstartTimer  0/2  Ram=0
+   ³  ÃÄreadAD  0/32  Ram=2
+   ³  ÀÄwriteDA  0/48  Ram=6
+   ÀÄtimer0_isr  0/18  Ram=0
