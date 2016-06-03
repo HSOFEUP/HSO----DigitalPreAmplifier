@@ -4,7 +4,7 @@ Digital Pre Amplifier with digital control.
 The audio parameters such as volume, balance, tremble, bass, source, rec source and others  
 are controleld by the user using combinations of buttons and potentiometers.  
 The potentiometer measure the value that are the gathered by the microprocessor and transformed  
-to digital values to been show in the lCD and send to the digital tone contropl circuit.  
+to digital values to been show in the LCD and send to the digital tone contropl circuit.  
 The source and rec channels are digital selected and the relays are selected via I2C bus enabling  
 to to reduce the antenna effect on the analog signal.
 Many inputs can be selected including balanced inputs, REC source can be disabled.  
